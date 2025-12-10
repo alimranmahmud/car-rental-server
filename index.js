@@ -27,6 +27,15 @@ async function run() {
         const carCollection = db.collection('cars')
         const bookingCollection = db.collection('booking')
 
+        app.get('/top/rated-cars',async(req,res)=>{
+            const result = await carCollection.find()
+            .sort({usesCar:-1})
+            .limit(3)
+            .toArray()
+
+            res.send(result)
+        })
+
         app.get('/latest-cars', async (req, res) => {
             const result = await carCollection.find().limit(6).toArray()
             res.send(result)
@@ -91,7 +100,10 @@ async function run() {
 
                 await carCollection.updateOne(
                     { _id: new ObjectId(data.carId) },
-                    { $set: { status: "unavailable" } }
+                    {
+                        $set: { status: "unavailable" },
+                        $inc: { usesCar: 1 }   
+                    }
                 );
 
                 res.send({ success: true, bookingResult });
