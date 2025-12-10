@@ -71,11 +71,29 @@ async function run() {
         });
 
 
+        // app.post("/bookings", async (req, res) => {
+        //     const data = req.body;
+        //     const result = await bookingCollection.insertOne(data);
+        //     res.send(result);
+        // });
         app.post("/bookings", async (req, res) => {
             const data = req.body;
-            const result = await bookingCollection.insertOne(data);
-            res.send(result);
+
+            try {
+                const bookingResult = await bookingCollection.insertOne(data);
+
+                await carCollection.updateOne(
+                    { _id: new ObjectId(data.carId) },
+                    { $set: { status: "unavailable" } }
+                );
+
+                res.send({ success: true,  bookingResult });
+
+            } catch (err) {
+                res.send({ error: true });
+            }
         });
+
 
         app.get("/bookings/:email", async (req, res) => {
             const result = await bookingCollection.find({ userEmail: req.params.email }).toArray();
