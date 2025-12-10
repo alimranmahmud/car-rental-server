@@ -1,11 +1,13 @@
 const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 const express = require('express')
 const cors = require('cors')
+// require('dotenv').config()
 const port = 3000
 
 const app = express()
 app.use(cors())
 app.use(express.json())
+
 
 const uri = "mongodb+srv://car_rental:sq1YxPIXsnhwEntk@cluster0.wlngie2.mongodb.net/?appName=Cluster0";
 
@@ -40,6 +42,7 @@ async function run() {
             const data = req.body;
             const result = await carCollection.insertOne(data);
             res.send(result)
+
         })
 
         app.get('/cars/provider/:email', async (req, res) => {
@@ -50,7 +53,8 @@ async function run() {
 
         app.delete('/cars/:id', async (req, res) => {
             const id = req.params.id;
-            const result = await carCollection.deleteOne({ _id: new ObjectId(id) })
+            const query = { _id: new ObjectId(id) }
+            const result = await carCollection.deleteOne(query)
             res.send(result)
         });
 
@@ -66,27 +70,11 @@ async function run() {
             res.send(result);
         });
 
+
         app.post("/bookings", async (req, res) => {
             const data = req.body;
-
-            try {
-                const bookingResult = await bookingCollection.insertOne(data);
-
-                await carCollection.updateOne(
-                    { _id: new ObjectId(data.carId) },
-                    { $set: { status: "unavailable" } }
-                );
-
-                res.send({
-                    success: true,
-                    message: "Booking saved & car marked unavailable",
-                    booking: bookingResult,
-                });
-
-            } catch (err) {
-                console.error(err);
-                res.status(500).send({ error: err.message });
-            }
+            const result = await bookingCollection.insertOne(data);
+            res.send(result);
         });
 
         app.get("/bookings/:email", async (req, res) => {
@@ -94,37 +82,33 @@ async function run() {
             res.send(result);
         });
 
-le
         app.delete("/bookings/:id", async (req, res) => {
             const id = req.params.id;
-
-            try {
-                const bookingData = await bookingCollection.findOne({ _id: new ObjectId(id) });
-
-                const deleteResult = await bookingCollection.deleteOne({
-                    _id: new ObjectId(id)
-                });
-
-                await carCollection.updateOne(
-                    { _id: new ObjectId(bookingData.carId) },
-                    { $set: { status: "available" } }
-                );
-
-                res.send(deleteResult);
-
-            } catch (err) {
-                console.error(err);
-                res.status(500).send({ error: err.message });
-            }
+            const query = { _id: new ObjectId(id) }
+            const result = await bookingCollection.deleteOne(query)
+            res.send(result)
         });
 
+
+
+
+
+
+
+
+
+
+
+
+
         await client.db("admin").command({ ping: 1 });
-        console.log("Pinged your deployment. Connected to MongoDB!");
+        console.log("Pinged your deployment. You successfully connected to MongoDB!");
     } finally {
         // await client.close();
     }
 }
 run().catch(console.dir);
+
 
 app.get('/', (req, res) => {
     res.send('Hello World!')
