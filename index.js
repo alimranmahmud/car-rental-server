@@ -27,11 +27,11 @@ async function run() {
         const carCollection = db.collection('cars')
         const bookingCollection = db.collection('booking')
 
-        app.get('/top/rated-cars',async(req,res)=>{
+        app.get('/top/rated-cars', async (req, res) => {
             const result = await carCollection.find()
-            .sort({usesCar:-1})
-            .limit(3)
-            .toArray()
+                .sort({ usesCar: -1 })
+                .limit(3)
+                .toArray()
 
             res.send(result)
         })
@@ -102,7 +102,7 @@ async function run() {
                     { _id: new ObjectId(data.carId) },
                     {
                         $set: { status: "unavailable" },
-                        $inc: { usesCar: 1 }   
+                        $inc: { usesCar: 1 }
                     }
                 );
 
@@ -137,6 +137,13 @@ async function run() {
                 { $set: { status: "available" } }
             );
             res.send(result);
+
+            app.get('/search', async (req, res) => {
+                const search_text = req.query.search
+                const query = { carName: {$regex:search_text, $options:"i"} }
+                const result = await carCollection.find(query).toArray()
+                res.send(result)
+            })
 
 
         });
