@@ -27,6 +27,11 @@ async function run() {
         const carCollection = db.collection('cars')
         const bookingCollection = db.collection('booking')
 
+        app.get('/latest-cars', async (req, res) => {
+            const result = await carCollection.find().limit(6).toArray()
+            res.send(result)
+        })
+
         app.get('/cars', async (req, res) => {
             const result = await carCollection.find().toArray()
             res.send(result)
