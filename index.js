@@ -137,16 +137,15 @@ async function run() {
                 { $set: { status: "available" } }
             );
             res.send(result);
-
-            app.get('/search', async (req, res) => {
-                const search_text = req.query.search
-                const query = { carName: {$regex:search_text, $options:"i"} }
-                const result = await carCollection.find(query).toArray()
-                res.send(result)
-            })
-
-
         });
+
+        app.get('/search', async (req, res) => {
+            const search_text = req.query.search
+            const query = { carName: { $regex: search_text, $options: "i" } }
+            const result = await carCollection.find(query).toArray()
+            res.send(result)
+        })
+
 
 
 
