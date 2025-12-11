@@ -85,12 +85,7 @@ async function run() {
         });
 
 
-        // app.post("/bookings", async (req, res) => {
-        //     const data = req.body;
-        //     const result = await bookingCollection.insertOne(data);
-        //     res.send(result);
-        // });
-
+   
 
         app.post("/bookings", async (req, res) => {
             const data = req.body;
@@ -119,12 +114,7 @@ async function run() {
             res.send(result);
         });
 
-        // app.delete("/bookings/:id", async (req, res) => {
-        //     const id = req.params.id;
-        //     const query = { _id: new ObjectId(id) }
-        //     const result = await bookingCollection.deleteOne(query)
-        //     res.send(result)
-        // });
+       
         app.delete("/bookings/:id", async (req, res) => {
             const id = req.params.id;
             const query = { _id: new ObjectId(id) }
